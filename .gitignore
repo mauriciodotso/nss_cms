@@ -1,5 +1,8 @@
-bin
+bin/**/*
 **/*.cpp~
 **/*.h~
 **/*.make
+*.make
 Makefile
+obj/**/*
+
