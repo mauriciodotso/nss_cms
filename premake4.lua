@@ -11,7 +11,9 @@ solution "nss-cms"
 			"includes/*.h"
 		}
 
+		includedirs {"/usr/include/nspr4", "/usr/include/nss3"}
+
 		configuration "Debug"
 			defines "__DEBUG__"
 
-		links {"nss_cms"}
+		links {"smime3", "nss3"}
