@@ -6,20 +6,27 @@ int main(int argc, char** argv)
 	std::cout << "main" << std::endl;
 
 	SECItem item;
-	unsigned int dataLen = 0;
 
+	PRFileDesc *sigFileDesc = NULL;
+	PRFileInfo sigFileInfo;
+
+	sigFileDesc = PR_Open("../protocolo.p7s", PR_RDONLY, 0);
+	if (!sigFileDesc) {
+		std::cerr << "Wasn't possible to open the signature file." << std::endl;
+		return 0;
+	}
+
+	PR_GetOpenFileInfo(sigFileDesc, &sigFileInfo);
 	SECITEM_AllocItem(
 		NULL, //NO PLArena
 		&item,
-		dataLen
+		sigFileInfo.size
 		);
 
-	NSSCMSMessage * msg;
-	msg = NSS_CMSMessage_CreateFromDER(&item, 
-		NULL, NULL, // Content callback
-		NULL, NULL, //Password callback
-		NULL, NULL //Decrypt callback
-		);
+	std::cout << PR_Read(sigFileDesc, item.data, sigFileInfo.size) << std::endl;
+
+	NSSCMSMessage * msg = NULL;
+	NSS_CMSMessage_CreateFromDER(&item, NULL, NULL /* Content callback */, NULL, NULL /*Password callback*/, NULL, NULL /*Decrypt callback*/);
 
 	if (NSS_CMSMessage_IsSigned(msg) == PR_FALSE) {
 		std::cout << "The CMS isn't a Signature!" << std::cout;
